@@ -8,11 +8,11 @@ from typing import Optional
 from dotenv import load_dotenv
 load_dotenv()  # read .env into the process before anything else runs
 
-from fastapi import FastAPI, Depends, HTTPException, Request
-from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
+from fastapi import FastAPI, Depends, HTTPException, Request, Form
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from sqlalchemy.orm import Session
 
 from . import models, ai, exports
@@ -54,7 +54,12 @@ def index(request: Request, q: Optional[str] = None, db: Session = Depends(get_d
 
 
 @app.get("/book/{book_id}", response_class=HTMLResponse)
-def book_page(book_id: int, request: Request, db: Session = Depends(get_db)):
+def book_page(
+    book_id: int,
+    request: Request,
+    auto: int = 0,
+    db: Session = Depends(get_db),
+):
     book = db.get(models.Book, book_id)
     if not book:
         raise HTTPException(404, "Book not found")
@@ -66,8 +71,49 @@ def book_page(book_id: int, request: Request, db: Session = Depends(get_db)):
             "book": book,
             "summary": summary,
             "languages": SUPPORTED_LANGUAGES,
+            "auto_generate": bool(auto) and summary is None,
         },
     )
+
+
+@app.post("/book/new")
+def book_new(
+    title:  str = Form(...),
+    author: str = Form(...),
+    year:   Optional[int] = Form(None),
+    genre:  Optional[str] = Form(None),
+    db: Session = Depends(get_db),
+):
+    """User-submitted book. Adds it to the catalog and redirects to the
+    detail page, which auto-triggers summary generation."""
+    title  = title.strip()
+    author = author.strip()
+    if not title or not author:
+        raise HTTPException(400, "Title and author are required.")
+
+    # Dedupe — case-insensitive match on (title, author).
+    existing = (
+        db.query(models.Book)
+          .filter(func.lower(models.Book.title)  == title.lower())
+          .filter(func.lower(models.Book.author) == author.lower())
+          .one_or_none()
+    )
+    if existing:
+        return RedirectResponse(
+            url=f"/book/{existing.id}", status_code=303,
+        )
+
+    book = models.Book(
+        title=title,
+        author=author,
+        year=year,
+        genre=(genre or "").strip() or None,
+        description=None,
+    )
+    db.add(book)
+    db.commit()
+    db.refresh(book)
+    return RedirectResponse(url=f"/book/{book.id}?auto=1", status_code=303)
 
 
 # ─── API: summaries + translations ──────────────────────────────────────────

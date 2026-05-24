@@ -217,5 +217,8 @@
         // Render the server-side Markdown text through the same pipeline.
         const raw = document.getElementById('summary-md').innerText;
         showContent('en', raw);
+    } else if (article.dataset.autoGenerate === '1') {
+        // Auto-trigger generation when arriving via the "request a new book" flow.
+        $btnGen.click();
     }
 })();

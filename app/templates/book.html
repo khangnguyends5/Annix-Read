@@ -4,7 +4,9 @@
 {% block content %}
 <a href="/" class="text-sm text-stone-500 hover:text-stone-900 mb-4 inline-block">← Back to catalog</a>
 
-<article class="bg-white rounded-lg border border-stone-200 p-8" data-book-id="{{ book.id }}">
+<article class="bg-white rounded-lg border border-stone-200 p-8"
+         data-book-id="{{ book.id }}"
+         data-auto-generate="{{ '1' if auto_generate else '0' }}">
     <header class="mb-6 pb-6 border-b border-stone-100">
         <h1 class="text-3xl font-semibold tracking-tight">{{ book.title }}</h1>
         <p class="text-lg text-stone-600 mt-1">by {{ book.author }}{% if book.year %} · {{ book.year }}{% endif %}</p>

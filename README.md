@@ -10,7 +10,8 @@ Powered by **Claude Opus 4.7** for summary and translation, **gTTS** for audio n
 - **18 languages.** Translate any generated summary; cached per (book, language) pair so it only ever runs once.
 - **Audio narration.** Listen to the summary in any supported language. MP3 files are cached on disk.
 - **Downloadable.** Export PDF or EPUB in any supported language.
-- **Catalog seeded with 20 classics** across fiction, philosophy, business, science, psychology, and history. Add more by extending `app/catalog.py`.
+- **Catalog seeded with 20 classics** across fiction, philosophy, business, science, psychology, and history.
+- **Request any book.** Don't see it? Type a title + author on the homepage and Claude generates a fresh summary. New books are added to the catalog and the summary is cached.
 - **Cached summaries / translations / audio** survive restarts via SQLite.
 
 ## Quickstart
@@ -71,7 +72,8 @@ annix_read/
 | Method | Path                                              | Purpose                          |
 |--------|---------------------------------------------------|----------------------------------|
 | GET    | `/`                                               | Browse catalog (optional `?q=…`) |
-| GET    | `/book/{id}`                                      | Book detail page                 |
+| POST   | `/book/new`                                       | Add a user-requested book (title/author form) |
+| GET    | `/book/{id}`                                      | Book detail page (`?auto=1` auto-triggers generation) |
 | POST   | `/api/books/{id}/summary`                         | Generate the English summary     |
 | GET    | `/api/books/{id}/translation?lang=es`             | Fetch cached translation         |
 | POST   | `/api/books/{id}/translation?lang=es`             | Generate translation             |
