@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} — Annix Read{% endblock %}
+
+{% block content %}
+<a href="/" class="text-sm text-stone-500 hover:text-stone-900 mb-4 inline-block">← Back to catalog</a>
+
+<article class="bg-white rounded-lg border border-stone-200 p-8" data-book-id="{{ book.id }}">
+    <header class="mb-6 pb-6 border-b border-stone-100">
+        <h1 class="text-3xl font-semibold tracking-tight">{{ book.title }}</h1>
+        <p class="text-lg text-stone-600 mt-1">by {{ book.author }}{% if book.year %} · {{ book.year }}{% endif %}</p>
+        {% if book.genre %}<span class="inline-block mt-2 px-2 py-0.5 rounded-full bg-stone-100 text-xs text-stone-600">{{ book.genre }}</span>{% endif %}
+        {% if book.description %}<p class="text-stone-700 mt-4">{{ book.description }}</p>{% endif %}
+    </header>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap items-center gap-3 mb-6">
+        <label class="text-sm text-stone-600">Language:</label>
+        <select id="lang-select" class="rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm focus:border-amber-600 focus:ring-2 focus:ring-amber-200 outline-none">
+            {% for lang in languages %}
+            <option value="{{ lang.code }}">{{ lang.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button id="btn-generate"
+                class="ml-auto px-4 py-1.5 rounded-md bg-amber-700 text-white text-sm hover:bg-amber-800 transition disabled:opacity-60 disabled:cursor-not-allowed">
+            {% if summary %}Re-render{% else %}Generate summary{% endif %}
+        </button>
+
+        <button id="btn-audio"
+                class="px-3 py-1.5 rounded-md border border-stone-300 bg-white text-sm hover:bg-stone-50 transition disabled:opacity-60 disabled:cursor-not-allowed">
+            🔊 Listen
+        </button>
+        <a id="btn-pdf"
+           class="px-3 py-1.5 rounded-md border border-stone-300 bg-white text-sm hover:bg-stone-50 transition opacity-60 pointer-events-none">
+            PDF
+        </a>
+        <a id="btn-epub"
+           class="px-3 py-1.5 rounded-md border border-stone-300 bg-white text-sm hover:bg-stone-50 transition opacity-60 pointer-events-none">
+            EPUB
+        </a>
+    </div>
+
+    <!-- Status banner -->
+    <div id="status" class="hidden mb-4 px-4 py-3 rounded-md text-sm"></div>
+
+    <!-- Audio player (initially hidden) -->
+    <audio id="player" controls class="hidden w-full mb-6"></audio>
+
+    <!-- Summary body -->
+    <div id="summary" class="prose-content">
+        {% if summary %}
+            <div class="text-xs text-stone-400 mb-2">{{ summary.word_count }} words · ~{{ (summary.word_count / 200)|int }} min read</div>
+            <div id="summary-md">{{ summary.content }}</div>
+        {% else %}
+            <div class="text-stone-500 text-center py-12">
+                <p class="mb-3">No summary yet for this book.</p>
+                <p class="text-sm">Click <strong>Generate summary</strong> to create one with Claude.</p>
+            </div>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}
