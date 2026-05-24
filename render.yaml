@@ -18,12 +18,13 @@ services:
     runtime: python
     plan: free
     region: oregon                       # or singapore / frankfurt / ohio
-    pythonVersion: "3.12"
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false                      # prompts you in the Render UI on first deploy
+      - key: PYTHON_VERSION
+        value: "3.12.7"                  # Render reads PYTHON_VERSION, not pythonVersion
       - key: PYTHONUNBUFFERED
         value: "1"
     healthCheckPath: /api/health
