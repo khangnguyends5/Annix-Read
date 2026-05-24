@@ -89,6 +89,19 @@ annix_read/
 - **Tune summaries.** Edit `_SUMMARY_SYSTEM` in `app/ai.py`. The system prompt is cacheable — keep it stable for cache hits.
 - **Swap the model.** `MODEL = "claude-opus-4-7"` at the top of `app/ai.py`. For higher throughput, try `claude-sonnet-4-6`.
 
+## Deploy to Render (free)
+
+A `render.yaml` blueprint is included. After pushing this repo to GitHub:
+
+1. Sign in at <https://dashboard.render.com>
+2. **New → Blueprint** → pick this repo
+3. Render reads `render.yaml` and asks for the `ANTHROPIC_API_KEY` env var
+4. First deploy takes ~3–5 minutes; you get a public `https://annix-read-<hash>.onrender.com` URL
+
+Free-tier notes:
+- The service sleeps after 15 minutes of inactivity (~30s cold start when it wakes).
+- The filesystem is ephemeral — SQLite + cached audio/PDF/EPUB reset on each redeploy. Summaries regenerate on demand and are re-cached. For permanent storage attach a persistent disk (paid) or migrate to Postgres.
+
 ## What this is not
 
 - **Not a copy of the book.** Summaries are AI-generated literary analysis — fair use under most jurisdictions, but check yours before commercial deployment.

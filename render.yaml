@@ -1,0 +1,30 @@
+# Render Blueprint — one-click deploy.
+#
+# After pushing this repo to GitHub:
+#   1. Sign in at https://dashboard.render.com
+#   2. New → Blueprint → connect this repo
+#   3. Render reads this file and prompts for ANTHROPIC_API_KEY
+#   4. First deploy takes ~3–5 minutes
+#
+# Free tier notes:
+#   * Web service sleeps after 15 min of inactivity (~30s cold start when it wakes)
+#   * Filesystem is ephemeral — SQLite + generated audio/PDF/EPUB reset on each
+#     redeploy or restart. Summaries get regenerated on demand and re-cached.
+#     For permanent caching, add a persistent disk (paid) or move to Postgres.
+
+services:
+  - type: web
+    name: annix-read
+    runtime: python
+    plan: free
+    region: oregon                       # or singapore / frankfurt / ohio
+    pythonVersion: "3.12"
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false                      # prompts you in the Render UI on first deploy
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    healthCheckPath: /api/health
+    autoDeploy: true                     # push to GitHub → auto-redeploy
