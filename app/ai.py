@@ -87,7 +87,10 @@ def generate_summary(title: str, author: str, year: int | None = None) -> str:
     if year:
         book_ref += f" ({year})"
     user_msg = f"Summarize the book {book_ref}."
-    return _dispatch(_SUMMARY_SYSTEM, user_msg, max_tokens=8_000)
+    # 3000 tokens ≈ ~2200 words of output — comfortable headroom over the
+    # 800-1200 word target we ask for, and keeps the per-call TPM cost low
+    # enough to stay inside Gemini's free-tier limits (250K TPM).
+    return _dispatch(_SUMMARY_SYSTEM, user_msg, max_tokens=3_000)
 
 
 def translate(text: str, target_language_name: str) -> str:
@@ -190,15 +193,22 @@ def _run_gemini(system: str, user_msg: str, max_tokens: int) -> str:
                 raise RuntimeError("Gemini returned no text.")
             return text
         except gax_exc.ResourceExhausted as e:
-            # Rate-limited. Honour the server's suggested retry delay if present.
+            # Rate-limited. Try to read the server's suggested retry delay
+            # from the protobuf details list — but defend against SDK
+            # versions where `details` is either a list, a method, or absent.
             delay = _GEMINI_DEFAULT_BACKOFF_S
-            for d in getattr(e, "details", lambda: [])():
-                secs = getattr(d, "retry_delay", None)
-                if secs and getattr(secs, "seconds", None):
-                    delay = float(secs.seconds) + 1.0
-                    break
-            # Add a small jitter so concurrent retries don't realign.
-            delay += attempt * 5.0
+            try:
+                raw = getattr(e, "details", None)
+                if callable(raw):
+                    raw = raw()
+                for d in (raw or []):
+                    secs = getattr(d, "retry_delay", None)
+                    if secs is not None and getattr(secs, "seconds", None):
+                        delay = float(secs.seconds) + 1.0
+                        break
+            except Exception:                                                 # noqa: BLE001
+                pass    # fall back to default delay
+            delay += attempt * 5.0     # jitter
             log.warning("Gemini rate-limited (attempt %d/%d). Sleeping %.1fs.",
                         attempt + 1, _GEMINI_MAX_RETRIES, delay)
             time.sleep(delay)
