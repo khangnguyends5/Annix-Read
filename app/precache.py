@@ -39,6 +39,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from dotenv import load_dotenv
 load_dotenv()
 
+from sqlalchemy.exc import IntegrityError                                       # noqa: E402
+
 from app import models, ai, exports                                            # noqa: E402
 from app.db import SessionLocal, init_db                                       # noqa: E402
 from app.catalog import LANG_NAME                                              # noqa: E402
@@ -104,12 +106,31 @@ def precache(
                         content=summary_text,
                         word_count=word_count,
                     ))
-                    db.commit()
-                    stats["summaries_generated"] += 1
-                    print(f"  {tag}  generated {word_count}w in {dt:4.1f}s")
+                    try:
+                        db.commit()
+                        stats["summaries_generated"] += 1
+                        print(f"  {tag}  generated {word_count}w in {dt:4.1f}s")
+                    except IntegrityError:
+                        # Race: another process inserted this book_id between
+                        # our existence check and commit. Roll back and reload
+                        # whatever's now in the DB so translations / exports
+                        # below still work.
+                        db.rollback()
+                        existing = db.query(models.Summary).filter_by(
+                            book_id=book.id).one_or_none()
+                        if existing:
+                            summary_text = existing.content
+                            stats["summaries_existing"] += 1
+                            print(f"  {tag}  race-cached (other process)")
+                        else:
+                            stats["summaries_failed"] += 1
+                            print(f"  {tag}  FAILED: IntegrityError but no row visible")
+                            continue
                 except Exception as e:                                         # noqa: BLE001
+                    db.rollback()
                     stats["summaries_failed"] += 1
-                    print(f"  {tag}  FAILED: {type(e).__name__}: {e}")
+                    short = str(e)[:200].replace("\n", " ")
+                    print(f"  {tag}  FAILED: {type(e).__name__}: {short}")
                     continue
 
             # ── Translations ────────────────────────────────────────────────
