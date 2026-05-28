@@ -16,6 +16,10 @@ data/*.db-journal
 data/exports/
 data/audio/
 
+# …but DO ship the pre-cached seed catalog so the deployed app works
+# with zero API key configured. Re-cache with `python -m app.precache`.
+!data/annix_read.db
+
 # Editors / OS
 .vscode/
 .idea/
