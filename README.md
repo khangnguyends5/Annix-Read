@@ -2,7 +2,15 @@
 
 AI-powered book summaries. The essence of any book, in 10 minutes — with read, listen, translate, and export to PDF or EPUB.
 
-Powered by **Claude Opus 4.7** for summary and translation, **gTTS** for audio narration, and a tiny FastAPI + SQLite stack.
+**100% free for educational use.** Pick any of three AI backends:
+
+| Backend | Cost | Setup | Quality |
+|---|---|---|---|
+| **Gemini Flash** | Free (1500 requests/day) | 5-min signup, no credit card | Very good ⭐ recommended |
+| **Ollama** | Free, no key | Install Ollama + 5GB model | Decent (offline + private) |
+| **Claude Opus** | ~$0.10 / book | Anthropic account | Best |
+
+…plus **gTTS** for audio (free, no key) and a tiny FastAPI + SQLite stack.
 
 ## Features
 
@@ -10,8 +18,9 @@ Powered by **Claude Opus 4.7** for summary and translation, **gTTS** for audio n
 - **18 languages.** Translate any generated summary; cached per (book, language) pair so it only ever runs once.
 - **Audio narration.** Listen to the summary in any supported language. MP3 files are cached on disk.
 - **Downloadable.** Export PDF or EPUB in any supported language.
-- **Catalog seeded with 20 classics** across fiction, philosophy, business, science, psychology, and history.
-- **Request any book.** Don't see it? Type a title + author on the homepage and Claude generates a fresh summary. New books are added to the catalog and the summary is cached.
+- **Catalog seeded with 60 classics** across 13 genres — fiction, philosophy, business, science, psychology, history, sci-fi, biography, and more.
+- **Request any book.** Don't see it? Type a title + author on the homepage and the AI generates a fresh summary. New books are added to the catalog and the summary is cached.
+- **Pre-cache the whole catalog.** Run `python -m app.precache` once with any AI provider configured and every seeded book's summary lands in the DB. Ship the resulting `data/annix_read.db` and every visitor gets instant summaries with **no API key required, ever**.
 - **Cached summaries / translations / audio** survive restarts via SQLite.
 
 ## Quickstart
@@ -25,12 +34,16 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 2. Add your Anthropic API key
+### 2. Configure one AI backend (pick one — first two are free)
 
 ```powershell
 copy .env.example .env
-# Open .env and paste your key from https://console.anthropic.com/
+notepad .env       # uncomment ONE of GOOGLE_API_KEY / ENABLE_OLLAMA / ANTHROPIC_API_KEY
 ```
+
+**Easiest (free):** get a Gemini key at <https://aistudio.google.com/app/apikey>, no credit card. Paste as `GOOGLE_API_KEY` in `.env`.
+
+**Truly offline (free, no key):** install [Ollama](https://ollama.ai/download), run `ollama pull llama3.1`, set `ENABLE_OLLAMA=1` in `.env`.
 
 ### 3. Run
 
@@ -38,7 +51,20 @@ copy .env.example .env
 python run.py
 ```
 
-Open <http://127.0.0.1:8000> and click any book.
+Open <http://127.0.0.1:8000> and click any book — the summary auto-generates on first visit.
+
+### 4. (Optional) Pre-cache the catalog for zero-API hosting
+
+If you want to deploy this and have visitors use it with no API key at all:
+
+```powershell
+# On a machine that has one of the AI backends configured:
+python -m app.precache
+
+# Then ship data\annix_read.db with your deployment. Done.
+```
+
+Add `--audio --pdf --epub` to also pre-render those for every book (slower, more disk).
 
 ## Architecture
 

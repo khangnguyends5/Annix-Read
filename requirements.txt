@@ -1,4 +1,6 @@
 anthropic>=0.40.0
+google-generativeai>=0.8.0    # free-tier Gemini fallback
+# requests is brought in by anthropic; Ollama uses it directly
 fastapi>=0.115.0
 uvicorn[standard]>=0.32.0
 python-multipart>=0.0.9

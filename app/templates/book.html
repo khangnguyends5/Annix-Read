@@ -51,12 +51,24 @@
     <!-- API-key-missing banner -->
     {% if not api_key_configured and not summary %}
     <div class="mb-6 px-4 py-3 rounded-md bg-amber-50 border border-amber-300 text-amber-900 text-sm">
-        <p class="font-medium">⚠ Claude API key not configured.</p>
-        <p class="mt-1">To generate summaries, audio, PDFs, and EPUBs you need an
-            Anthropic API key. Copy <code class="bg-amber-100 px-1 rounded">.env.example</code>
-            to <code class="bg-amber-100 px-1 rounded">.env</code>, paste your key from
-            <a href="https://console.anthropic.com/" target="_blank" class="underline">console.anthropic.com</a>,
-            and restart the server.</p>
+        <p class="font-medium">⚠ No AI provider configured.</p>
+        <p class="mt-1">Pick one (the first two are <strong>free</strong>):</p>
+        <ul class="mt-2 ml-5 list-disc space-y-1">
+            <li><strong>Gemini Flash</strong> (free tier, no credit card) —
+                grab a key at
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline">aistudio.google.com</a>,
+                set <code class="bg-amber-100 px-1 rounded">GOOGLE_API_KEY</code> in <code class="bg-amber-100 px-1 rounded">.env</code>.</li>
+            <li><strong>Ollama</strong> (100% offline, no key) — install
+                <a href="https://ollama.ai/download" target="_blank" class="underline">Ollama</a>,
+                run <code class="bg-amber-100 px-1 rounded">ollama pull llama3.1</code>,
+                set <code class="bg-amber-100 px-1 rounded">ENABLE_OLLAMA=1</code> in <code class="bg-amber-100 px-1 rounded">.env</code>.</li>
+            <li><strong>Claude</strong> (best quality, paid) — set
+                <code class="bg-amber-100 px-1 rounded">ANTHROPIC_API_KEY</code> in <code class="bg-amber-100 px-1 rounded">.env</code>.</li>
+        </ul>
+        <p class="mt-2">Then restart the server. Or pre-cache the catalog once
+            and never need a key:
+            <code class="bg-amber-100 px-1 rounded">python -m app.precache</code>.
+        </p>
     </div>
     {% endif %}
 

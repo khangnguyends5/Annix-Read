@@ -54,9 +54,8 @@ def index(request: Request, q: Optional[str] = None, db: Session = Depends(get_d
 
 
 def _api_key_configured() -> bool:
-    """True iff a real-looking Anthropic key is available."""
-    key = os.getenv("ANTHROPIC_API_KEY", "")
-    return bool(key) and not key.startswith("sk-ant-your")
+    """True if ANY supported AI provider is configured (Claude / Gemini / Ollama)."""
+    return ai.active_provider() != "none"
 
 
 @app.get("/book/{book_id}", response_class=HTMLResponse)
@@ -266,10 +265,11 @@ def api_epub(book_id: int, lang: str = "en", db: Session = Depends(get_db)):
 # ─── Health ──────────────────────────────────────────────────────────────────
 @app.get("/api/health")
 def health():
+    provider = ai.active_provider()
     return {
         "status": "ok",
-        "anthropic_key_configured": bool(
-            os.getenv("ANTHROPIC_API_KEY")
-            and not os.getenv("ANTHROPIC_API_KEY", "").startswith("sk-ant-your")
-        ),
+        "ai_provider": provider,                       # "claude" | "gemini" | "ollama" | "none"
+        "ai_configured": provider != "none",
+        # Back-compat for any old client that looks for this flag.
+        "anthropic_key_configured": provider == "claude",
     }
