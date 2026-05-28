@@ -148,12 +148,21 @@ def _run_claude(system: str, user_msg: str, max_tokens: int) -> str:
 
 
 # ─── Gemini implementation ───────────────────────────────────────────────────
-_GEMINI_MODEL = "gemini-2.0-flash"
+# Default to 1.5-flash — its free tier has roomier per-minute limits than
+# 2.0-flash today. Override with GEMINI_MODEL if you want a newer model.
+# gemini-2.5-flash-lite has the most generous free-tier quotas in 2026.
+# Override with GEMINI_MODEL=... if you want quality over throughput
+# (e.g. gemini-2.5-flash or gemini-3-flash-preview).
+_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
+
+_GEMINI_MAX_RETRIES = 5
+_GEMINI_DEFAULT_BACKOFF_S = 45.0      # fallback when API doesn't say
 
 
 def _run_gemini(system: str, user_msg: str, max_tokens: int) -> str:
     try:
         import google.generativeai as genai
+        from google.api_core import exceptions as gax_exc
     except ImportError as e:                                                  # pragma: no cover
         raise RuntimeError(
             "google-generativeai not installed. Run: pip install google-generativeai"
@@ -165,17 +174,41 @@ def _run_gemini(system: str, user_msg: str, max_tokens: int) -> str:
         model_name=_GEMINI_MODEL,
         system_instruction=system,
     )
-    resp = model.generate_content(
-        user_msg,
-        generation_config={
-            "max_output_tokens": max_tokens,
-            "temperature": 0.7,
-        },
+
+    import time
+    for attempt in range(_GEMINI_MAX_RETRIES):
+        try:
+            resp = model.generate_content(
+                user_msg,
+                generation_config={
+                    "max_output_tokens": max_tokens,
+                    "temperature": 0.7,
+                },
+            )
+            text = (resp.text or "").strip()
+            if not text:
+                raise RuntimeError("Gemini returned no text.")
+            return text
+        except gax_exc.ResourceExhausted as e:
+            # Rate-limited. Honour the server's suggested retry delay if present.
+            delay = _GEMINI_DEFAULT_BACKOFF_S
+            for d in getattr(e, "details", lambda: [])():
+                secs = getattr(d, "retry_delay", None)
+                if secs and getattr(secs, "seconds", None):
+                    delay = float(secs.seconds) + 1.0
+                    break
+            # Add a small jitter so concurrent retries don't realign.
+            delay += attempt * 5.0
+            log.warning("Gemini rate-limited (attempt %d/%d). Sleeping %.1fs.",
+                        attempt + 1, _GEMINI_MAX_RETRIES, delay)
+            time.sleep(delay)
+        except gax_exc.GoogleAPICallError as e:
+            raise RuntimeError(f"Gemini API call failed: {e}") from e
+
+    raise RuntimeError(
+        f"Gemini still rate-limited after {_GEMINI_MAX_RETRIES} retries. "
+        f"Try a different model with GEMINI_MODEL=gemini-2.0-flash, or wait."
     )
-    text = (resp.text or "").strip()
-    if not text:
-        raise RuntimeError("Gemini returned no text.")
-    return text
 
 
 # ─── Ollama implementation ───────────────────────────────────────────────────
