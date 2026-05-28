@@ -48,15 +48,32 @@
     <!-- Audio player (initially hidden) -->
     <audio id="player" controls class="hidden w-full mb-6"></audio>
 
+    <!-- API-key-missing banner -->
+    {% if not api_key_configured and not summary %}
+    <div class="mb-6 px-4 py-3 rounded-md bg-amber-50 border border-amber-300 text-amber-900 text-sm">
+        <p class="font-medium">⚠ Claude API key not configured.</p>
+        <p class="mt-1">To generate summaries, audio, PDFs, and EPUBs you need an
+            Anthropic API key. Copy <code class="bg-amber-100 px-1 rounded">.env.example</code>
+            to <code class="bg-amber-100 px-1 rounded">.env</code>, paste your key from
+            <a href="https://console.anthropic.com/" target="_blank" class="underline">console.anthropic.com</a>,
+            and restart the server.</p>
+    </div>
+    {% endif %}
+
     <!-- Summary body -->
     <div id="summary" class="prose-content">
         {% if summary %}
             <div class="text-xs text-stone-400 mb-2">{{ summary.word_count }} words · ~{{ (summary.word_count / 200)|int }} min read</div>
             <div id="summary-md">{{ summary.content }}</div>
+        {% elif api_key_configured %}
+            <div class="text-stone-500 text-center py-12">
+                <p class="mb-3">Generating summary with Claude…</p>
+                <p class="text-sm">Takes ~30–90 seconds. The content + audio + downloads will appear here automatically.</p>
+            </div>
         {% else %}
             <div class="text-stone-500 text-center py-12">
                 <p class="mb-3">No summary yet for this book.</p>
-                <p class="text-sm">Click <strong>Generate summary</strong> to create one with Claude.</p>
+                <p class="text-sm">Configure your API key above, then click <strong>Generate summary</strong>.</p>
             </div>
         {% endif %}
     </div>

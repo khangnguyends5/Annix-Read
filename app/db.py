@@ -25,16 +25,33 @@ def get_db():
 
 
 def init_db():
-    """Create tables and seed the catalog if empty."""
+    """
+    Create tables and seed the catalog. Idempotent — books that already
+    exist (matched on lowercase title+author) are skipped, so adding new
+    entries to SEED_BOOKS just adds them on next startup without wiping
+    existing summaries / translations / audio.
+    """
+    from sqlalchemy import func
     from . import models  # noqa: F401 — register models with Base
     Base.metadata.create_all(bind=engine)
 
     from .catalog import SEED_BOOKS
     db = SessionLocal()
     try:
-        if db.query(models.Book).count() == 0:
-            for entry in SEED_BOOKS:
-                db.add(models.Book(**entry))
+        # Build a set of lowercase (title, author) pairs already in the DB.
+        existing = {
+            (t.lower(), a.lower())
+            for t, a in db.query(models.Book.title, models.Book.author).all()
+        }
+        added = 0
+        for entry in SEED_BOOKS:
+            key = (entry["title"].lower(), entry["author"].lower())
+            if key in existing:
+                continue
+            db.add(models.Book(**entry))
+            added += 1
+        if added:
             db.commit()
+            # Note: avoid touching logging here; init_db runs at FastAPI startup.
     finally:
         db.close()

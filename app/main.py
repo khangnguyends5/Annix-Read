@@ -53,17 +53,24 @@ def index(request: Request, q: Optional[str] = None, db: Session = Depends(get_d
     )
 
 
+def _api_key_configured() -> bool:
+    """True iff a real-looking Anthropic key is available."""
+    key = os.getenv("ANTHROPIC_API_KEY", "")
+    return bool(key) and not key.startswith("sk-ant-your")
+
+
 @app.get("/book/{book_id}", response_class=HTMLResponse)
 def book_page(
     book_id: int,
     request: Request,
-    auto: int = 0,
+    auto: int = 0,                                              # kept for back-compat
     db: Session = Depends(get_db),
 ):
     book = db.get(models.Book, book_id)
     if not book:
         raise HTTPException(404, "Book not found")
     summary = db.query(models.Summary).filter_by(book_id=book_id).one_or_none()
+    has_key = _api_key_configured()
     return templates.TemplateResponse(
         request,
         "book.html",
@@ -71,7 +78,10 @@ def book_page(
             "book": book,
             "summary": summary,
             "languages": SUPPORTED_LANGUAGES,
-            "auto_generate": bool(auto) and summary is None,
+            # Auto-generate on EVERY visit when there's no summary yet AND
+            # the API key is configured. Clicking a book = seeing content.
+            "auto_generate": summary is None and has_key,
+            "api_key_configured": has_key,
         },
     )
 

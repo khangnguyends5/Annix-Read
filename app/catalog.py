@@ -145,6 +145,302 @@ SEED_BOOKS = [
         "genre": "Fiction",
         "description": "A student's moral disintegration after a calculated murder.",
     },
+
+    # ─── Literary fiction ─────────────────────────────────────────────────
+    {
+        "title": "Pride and Prejudice",
+        "author": "Jane Austen",
+        "year": 1813,
+        "genre": "Fiction",
+        "description": "Wit, marriage, and class in Regency England, anchored by Elizabeth Bennet.",
+    },
+    {
+        "title": "Anna Karenina",
+        "author": "Leo Tolstoy",
+        "year": 1877,
+        "genre": "Fiction",
+        "description": "A society wife's affair unravels her — and a parallel quest for meaning unfolds beside it.",
+    },
+    {
+        "title": "One Hundred Years of Solitude",
+        "author": "Gabriel García Márquez",
+        "year": 1967,
+        "genre": "Fiction",
+        "description": "Seven generations of the Buendía family in the mythic town of Macondo.",
+    },
+    {
+        "title": "The Catcher in the Rye",
+        "author": "J. D. Salinger",
+        "year": 1951,
+        "genre": "Fiction",
+        "description": "Three days of Holden Caulfield wandering New York, sour at adult phoniness.",
+    },
+    {
+        "title": "The Stranger",
+        "author": "Albert Camus",
+        "year": 1942,
+        "genre": "Fiction",
+        "description": "A detached man kills on an Algerian beach and refuses to perform grief.",
+    },
+    {
+        "title": "Beloved",
+        "author": "Toni Morrison",
+        "year": 1987,
+        "genre": "Fiction",
+        "description": "An escaped slave is haunted — literally — by the daughter she killed.",
+    },
+    {
+        "title": "The Old Man and the Sea",
+        "author": "Ernest Hemingway",
+        "year": 1952,
+        "genre": "Fiction",
+        "description": "An aging Cuban fisherman fights a giant marlin alone in the Gulf Stream.",
+    },
+    {
+        "title": "The Alchemist",
+        "author": "Paulo Coelho",
+        "year": 1988,
+        "genre": "Fiction",
+        "description": "A shepherd crosses the desert chasing a recurring dream of treasure.",
+    },
+    {
+        "title": "The Road",
+        "author": "Cormac McCarthy",
+        "year": 2006,
+        "genre": "Fiction",
+        "description": "A father and son push a shopping cart through a burnt-out America.",
+    },
+
+    # ─── Sci-fi & fantasy ────────────────────────────────────────────────
+    {
+        "title": "Dune",
+        "author": "Frank Herbert",
+        "year": 1965,
+        "genre": "Science Fiction",
+        "description": "Ecology, religion, and empire collide on the desert planet Arrakis.",
+    },
+    {
+        "title": "The Lord of the Rings",
+        "author": "J. R. R. Tolkien",
+        "year": 1954,
+        "genre": "Fantasy",
+        "description": "A hobbit carries a ring of absolute power to the volcano that forged it.",
+    },
+    {
+        "title": "Foundation",
+        "author": "Isaac Asimov",
+        "year": 1951,
+        "genre": "Science Fiction",
+        "description": "A mathematician predicts the fall of a galactic empire and engineers the recovery.",
+    },
+    {
+        "title": "The Hitchhiker's Guide to the Galaxy",
+        "author": "Douglas Adams",
+        "year": 1979,
+        "genre": "Science Fiction",
+        "description": "Earth is demolished for a hyperspace bypass; a man in a dressing gown survives.",
+    },
+
+    # ─── Business & startup ──────────────────────────────────────────────
+    {
+        "title": "Good to Great",
+        "author": "Jim Collins",
+        "year": 2001,
+        "genre": "Business",
+        "description": "Why some companies make the leap from solid to exceptional — and most don't.",
+    },
+    {
+        "title": "The Hard Thing About Hard Things",
+        "author": "Ben Horowitz",
+        "year": 2014,
+        "genre": "Business",
+        "description": "Building a company when the easy advice doesn't apply, from a survivor who did it.",
+    },
+    {
+        "title": "Principles",
+        "author": "Ray Dalio",
+        "year": 2017,
+        "genre": "Business",
+        "description": "The Bridgewater founder's rules for radical transparency in decisions and life.",
+    },
+    {
+        "title": "Outliers",
+        "author": "Malcolm Gladwell",
+        "year": 2008,
+        "genre": "Business",
+        "description": "Success is less about innate talent than circumstance, culture, and 10,000 hours.",
+    },
+    {
+        "title": "The Tipping Point",
+        "author": "Malcolm Gladwell",
+        "year": 2000,
+        "genre": "Business",
+        "description": "Why small changes cascade into epidemics, fashions, and movements.",
+    },
+    {
+        "title": "Hooked",
+        "author": "Nir Eyal",
+        "year": 2014,
+        "genre": "Business",
+        "description": "The trigger-action-reward-investment loop that makes products habit-forming.",
+    },
+
+    # ─── Psychology & self-help ──────────────────────────────────────────
+    {
+        "title": "The 7 Habits of Highly Effective People",
+        "author": "Stephen R. Covey",
+        "year": 1989,
+        "genre": "Self-Help",
+        "description": "Character-based effectiveness over personality tricks, in seven principles.",
+    },
+    {
+        "title": "How to Win Friends and Influence People",
+        "author": "Dale Carnegie",
+        "year": 1936,
+        "genre": "Self-Help",
+        "description": "The original playbook for handling people — still works ninety years later.",
+    },
+    {
+        "title": "Mindset",
+        "author": "Carol S. Dweck",
+        "year": 2006,
+        "genre": "Psychology",
+        "description": "Why believing your abilities can grow matters more than the abilities themselves.",
+    },
+    {
+        "title": "Grit",
+        "author": "Angela Duckworth",
+        "year": 2016,
+        "genre": "Psychology",
+        "description": "Passion plus perseverance — the trait that out-predicts IQ on long-run success.",
+    },
+    {
+        "title": "Quiet",
+        "author": "Susan Cain",
+        "year": 2012,
+        "genre": "Psychology",
+        "description": "The hidden power of introverts in a culture that idealizes the outgoing.",
+    },
+    {
+        "title": "The Power of Now",
+        "author": "Eckhart Tolle",
+        "year": 1997,
+        "genre": "Philosophy",
+        "description": "A spiritual teacher's argument that the present moment is the only door to peace.",
+    },
+    {
+        "title": "The Subtle Art of Not Giving a F*ck",
+        "author": "Mark Manson",
+        "year": 2016,
+        "genre": "Self-Help",
+        "description": "Pick your values carefully, accept limits, and stop chasing every good feeling.",
+    },
+    {
+        "title": "Range",
+        "author": "David Epstein",
+        "year": 2019,
+        "genre": "Psychology",
+        "description": "Why generalists triumph in a specialised world — and when specialists still win.",
+    },
+    {
+        "title": "Antifragile",
+        "author": "Nassim Nicholas Taleb",
+        "year": 2012,
+        "genre": "Philosophy",
+        "description": "Beyond resilience: how some systems gain from disorder, stress, and shocks.",
+    },
+
+    # ─── Science & medicine ──────────────────────────────────────────────
+    {
+        "title": "The Gene",
+        "author": "Siddhartha Mukherjee",
+        "year": 2016,
+        "genre": "Science",
+        "description": "Hereditary biology from Mendel to CRISPR, told through the author's own family.",
+    },
+    {
+        "title": "Cosmos",
+        "author": "Carl Sagan",
+        "year": 1980,
+        "genre": "Science",
+        "description": "A grand tour of the universe — and our improbable place in it.",
+    },
+    {
+        "title": "Why We Sleep",
+        "author": "Matthew Walker",
+        "year": 2017,
+        "genre": "Science",
+        "description": "What sleep does for memory, mood, immunity, longevity — and what losing it costs.",
+    },
+    {
+        "title": "The Emperor of All Maladies",
+        "author": "Siddhartha Mukherjee",
+        "year": 2010,
+        "genre": "Science",
+        "description": "A biography of cancer — from ancient times to the molecular age.",
+    },
+
+    # ─── Philosophy ──────────────────────────────────────────────────────
+    {
+        "title": "The Republic",
+        "author": "Plato",
+        "year": -380,
+        "genre": "Philosophy",
+        "description": "Socratic dialogue on justice, the ideal state, and the shadows on the cave wall.",
+    },
+    {
+        "title": "Beyond Good and Evil",
+        "author": "Friedrich Nietzsche",
+        "year": 1886,
+        "genre": "Philosophy",
+        "description": "An attack on inherited morality and the philosophers who built it.",
+    },
+    {
+        "title": "Tao Te Ching",
+        "author": "Lao Tzu",
+        "year": -400,
+        "genre": "Philosophy",
+        "description": "Eighty-one short chapters on the Way — quiet, paradoxical, practical.",
+    },
+
+    # ─── History ─────────────────────────────────────────────────────────
+    {
+        "title": "Guns, Germs, and Steel",
+        "author": "Jared Diamond",
+        "year": 1997,
+        "genre": "History",
+        "description": "Why some societies came to dominate others — geography over genetics.",
+    },
+    {
+        "title": "The Diary of a Young Girl",
+        "author": "Anne Frank",
+        "year": 1947,
+        "genre": "History",
+        "description": "A teenage girl writes from a hidden Amsterdam annex during the Holocaust.",
+    },
+
+    # ─── Biography & memoir ──────────────────────────────────────────────
+    {
+        "title": "Steve Jobs",
+        "author": "Walter Isaacson",
+        "year": 2011,
+        "genre": "Biography",
+        "description": "Apple's co-founder, in his own words and those of two hundred who knew him.",
+    },
+    {
+        "title": "Becoming",
+        "author": "Michelle Obama",
+        "year": 2018,
+        "genre": "Biography",
+        "description": "From the South Side of Chicago to the White House — and what came after.",
+    },
+    {
+        "title": "Born a Crime",
+        "author": "Trevor Noah",
+        "year": 2016,
+        "genre": "Biography",
+        "description": "Growing up mixed-race under apartheid, told with disarming humour.",
+    },
 ]
 
 
